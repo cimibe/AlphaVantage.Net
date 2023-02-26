@@ -12,14 +12,16 @@ namespace AlphaVantage.Net.Core.HttpClientWrapper
     public class HttpClientWithRateLimit : IHttpClientWrapper
     {
         private readonly HttpClient _client;
+        private readonly bool _disposeHttpClient;
         private readonly TimeSpan _minRequestInterval;//Calculated based on rpm limit in constructor
         private readonly Semaphore _concurrentRequestsCounter;
         private DateTime _previousRequestStartTime;
         private readonly Object _lockObject = new Object();
 
-        public HttpClientWithRateLimit(HttpClient client, int maxRequestPerMinutes, int maxConcurrentRequests)
+        public HttpClientWithRateLimit(HttpClient client, int maxRequestPerMinutes, int maxConcurrentRequests, bool disposeHttpClient = true)
         {
             _client = client;
+            _disposeHttpClient = disposeHttpClient;
             _minRequestInterval = new TimeSpan(0, 0, 0, 0, 60000 / maxRequestPerMinutes);
             _concurrentRequestsCounter = new Semaphore(maxConcurrentRequests, maxConcurrentRequests);
             _previousRequestStartTime = DateTime.MinValue;
@@ -72,7 +74,10 @@ namespace AlphaVantage.Net.Core.HttpClientWrapper
 
         public void Dispose()
         {
-            _client.Dispose();
+            if (_disposeHttpClient)
+            {
+                _client.Dispose();
+            }
             _concurrentRequestsCounter.Dispose();
         }
     }

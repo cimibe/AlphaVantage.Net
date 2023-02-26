@@ -37,10 +37,10 @@ namespace AlphaVantage.Net.Core.Client
         /// </summary>
         /// <param name="apiKey"></param>
         /// <param name="httpClient"></param>
-        public AlphaVantageClient(string apiKey, HttpClient httpClient)
+        public AlphaVantageClient(string apiKey, HttpClient httpClient, bool diposeHttpClient = true)
         {
             _apiKey = apiKey;
-            _httpClient = new DefaultHttpClientWrapper(httpClient);
+            _httpClient = new DefaultHttpClientWrapper(httpClient, diposeHttpClient);
         }
 
         /// <summary>

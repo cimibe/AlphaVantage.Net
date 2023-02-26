@@ -9,11 +9,13 @@ namespace AlphaVantage.Net.Core.HttpClientWrapper
     /// </summary>
     public class DefaultHttpClientWrapper : IHttpClientWrapper
     {
+        private readonly bool _disposeHttpClient;
         private readonly HttpClient _httpClient;
 
-        public DefaultHttpClientWrapper(HttpClient httpClient)
+        public DefaultHttpClientWrapper(HttpClient httpClient, bool diposeHttpClient = true)
         {
             _httpClient = httpClient;
+            _disposeHttpClient = diposeHttpClient;
         }
 
         public void SetTimeOut(TimeSpan timeSpan)
@@ -28,7 +30,10 @@ namespace AlphaVantage.Net.Core.HttpClientWrapper
 
         public void Dispose()
         {
-            _httpClient.Dispose();
+            if (_disposeHttpClient)
+            {
+                _httpClient.Dispose();
+            }
         }
     }
 }
